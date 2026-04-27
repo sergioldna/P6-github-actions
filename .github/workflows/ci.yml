@@ -56,3 +56,21 @@ jobs:
           name: test-reports-xml
           path: 'target/*-reports/TEST-*.xml'
           retention-days: 7
+
+      # 4. Generar Badge de Cobertura con Jacoco
+      - name: Generar Jacoco Badge
+        id: jacoco
+        uses: cicirello/jacoco-badge-generator@v2
+        with:
+          generate-branches-badge: true
+          jacoco-csv-file: target/site/jacoco/jacoco.csv
+
+      # 5. Hacer commit del badge al repositorio (para que el README pueda mostrarlo)
+      - name: Commit del Jacoco Badge
+        if: ${{ github.event_name != 'pull_request' }}
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .github/badges/jacoco.svg
+          git commit -m "Actualizar badge de cobertura Jacoco" || echo "No hay cambios en el badge"
+          git push
