@@ -1,0 +1,58 @@
+name: CI/CD Hospital Spring Boot
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    # ⚠️ MUY IMPORTANTE: Estos permisos son necesarios para que la acción
+    # de 'dorny/test-reporter' pueda escribir en la pestaña "Checks" de GitHub.
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      # 1. Actualizado a JDK 21 según el README
+      - name: Configurar JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: maven
+
+      - name: Dar permisos a mvnw
+        run: chmod +x mvnw
+
+      - name: Compilar el proyecto
+        run: ./mvnw compile --no-transfer-progress
+
+      # Al ejecutar verify se lanzan surefire (unitarios) y failsafe (integración IT)
+      - name: Ejecutar pruebas
+        run: ./mvnw verify --no-transfer-progress
+
+      # 2. Publicar el informe en la pestaña "Checks"
+      - name: Reporte de Pruebas (dorny)
+        uses: dorny/test-reporter@v1
+        if: success() || failure() # Ejecuta este paso aunque los tests fallen
+        with:
+          name: Resultados de Pruebas Maven
+          path: 'target/*-reports/TEST-*.xml' # Lee la carpeta surefire y failsafe
+          reporter: java-junit
+
+      # 3. Subir los XML como artefacto descargable (retención de 7 días)
+      - name: Subir reportes XML de tests
+        uses: actions/upload-artifact@v4
+        if: success() || failure()
+        with:
+          name: test-reports-xml
+          path: 'target/*-reports/TEST-*.xml'
+          retention-days: 7
