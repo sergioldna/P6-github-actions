@@ -13,7 +13,7 @@ jobs:
     # ⚠️ MUY IMPORTANTE: Estos permisos son necesarios para que la acción
     # de 'dorny/test-reporter' pueda escribir en la pestaña "Checks" de GitHub.
     permissions:
-      contents: read
+      contents: write
       actions: read
       checks: write
 
