@@ -95,4 +95,14 @@ public class ImagenControllerWebTestClientIT extends AbstractIntegration {
     void subirImagenesDePacienteDeFormaCorrecta(){
         subirImagen("ImagenPaciente");
     }
-   }
+
+    @Test
+    @DisplayName("Predecir imagen de un paciente")
+    void predecirImagenPaciente(){
+        subirImagen("ImagenAPredecir");
+
+        testClient.get().uri("/imagen/predict/1")   // Doy por hecho que el ID de la imagen es 1
+                .exchange()
+                .expectStatus().isOk();
+    }
+}
