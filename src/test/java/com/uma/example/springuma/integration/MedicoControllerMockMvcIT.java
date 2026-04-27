@@ -1,6 +1,5 @@
 package com.uma.example.springuma.integration;
 
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -8,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.DisabledIfEnvironmentVariable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -37,15 +35,15 @@ public class MedicoControllerMockMvcIT extends AbstractIntegration {
 
     private void crearMedico(Medico medico) throws Exception {
         this.mockMvc.perform(post("/medico")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medico)))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(medico)))
                 .andExpect(status().isCreated());
     }
 
     private void actualizarMedico(Medico medico, long id, String dni, String nombre, String especialidad) throws Exception {
         this.mockMvc.perform(post("/medico")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medico)))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(medico)))
                 .andExpect(status().isCreated());
 
         medico.setDni(dni);
@@ -54,66 +52,63 @@ public class MedicoControllerMockMvcIT extends AbstractIntegration {
         medico.setNombre(nombre);
 
         this.mockMvc.perform(put("/medico")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medico)))
-                .andExpect(status().isCreated());
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(medico)))
+                .andExpect(status().isNoContent());
 
-        this.mockMvc.perform(get("/medico"))
+        this.mockMvc.perform(get("/medico/" + id))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$", hasSize(1)))  // comprueba que el tamanyo sea 1
-                .andExpect(jsonPath("$[0]").value(medico));
-
+                .andExpect(jsonPath("$.id").value(id))
+                .andExpect(jsonPath("$.nombre").value(nombre));
     }
 
     private void eliminarMedico(Medico medico) throws Exception {
         this.mockMvc.perform(post("/medico")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medico)))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(medico)))
                 .andExpect(status().isCreated());
 
-        this.mockMvc.perform(delete("/medico")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medico)))
+        this.mockMvc.perform(delete("/medico/" + medico.getId()))
                 .andExpect(status().isOk());
     }
 
     private void obtenerMedico(Medico medico) throws Exception {
         this.mockMvc.perform(post("/medico")
-                .contentType("application/json")
-                .content(objectMapper.writeValueAsString(medico)))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(medico)))
                 .andExpect(status().isCreated());
 
-        this.mockMvc.perform(get("/medico"))
+        this.mockMvc.perform(get("/medico/" + medico.getId()))
                 .andDo(print())
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$", hasSize(1)))  // comprueba que el tamanyo sea 1
-                .andExpect(jsonPath("$[0]").value(medico));
+                .andExpect(jsonPath("$.id").value(medico.getId()))
+                .andExpect(jsonPath("$.dni").value(medico.getDni()));
     }
 
     @Test
     @DisplayName("Crear un médico")
-    void crearMedico() throws Exception {
+    void crearMedicoTest() throws Exception {
         crearMedico(medico);
     }
 
     @Test
     @DisplayName("Actualizar un médico")
-    void actualizarMedico() throws Exception {
-        actualizarMedico(medico, 2L, "836", "Sergio", "Consulta");
+    void actualizarMedicoTest() throws Exception {
+        actualizarMedico(medico, 1L, "836", "Sergio", "Consulta");
     }
 
     @Test
     @DisplayName("Obtener un médico")
-    void obtenerMedico() throws Exception {
+    void obtenerMedicoTest() throws Exception {
         obtenerMedico(medico);
     }
 
     @Test
     @DisplayName("Eliminar un médico")
-    void eliminarMedico() throws Exception {
+    void eliminarMedicoTest() throws Exception {
         eliminarMedico(medico);
     }
 }
