@@ -79,7 +79,38 @@ public class PacienteControllerMockMvcIT extends AbstractIntegration {
         crearPaciente(paciente);
 
         //Obtener paciente por ID
-        
+        getPacienteById(paciente.getId(), paciente);
     }
 
+    @Test
+    @DisplayName("Asociar paciente a médico")   // Ya se asocia cuando se crea el paciente
+    void asociarPacienteAMedico() throws Exception {
+        crearMedico(medico);
+        crearPaciente(paciente);
+        getPacienteById(paciente.getId(), paciente);
+    }
+
+    @Test
+    @DisplayName("Editar pacientes a médicos")
+    void editarPacientesAMedicos() throws Exception {
+        crearMedico(medico);
+        crearPaciente(paciente);
+
+        Medico medicoNuevo = new Medico();
+        medicoNuevo.setId(2L);
+        medicoNuevo.setNombre("Sergio");
+        medicoNuevo.setDni("111");
+        medicoNuevo.setEspecialidad("Revisión");
+        crearMedico(medicoNuevo);
+
+        paciente.setMedico(medicoNuevo);
+        paciente.setCita("Revisión");
+
+        mockMvc.perform(put("/paciente")
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(paciente)))
+                .andExpect(status().is2xxSuccessful());
+
+        getPacienteById(paciente.getId(), paciente);
+    }
 }
