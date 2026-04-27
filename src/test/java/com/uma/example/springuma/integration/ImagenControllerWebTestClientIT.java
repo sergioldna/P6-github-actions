@@ -90,4 +90,9 @@ public class ImagenControllerWebTestClientIT extends AbstractIntegration {
         }
     }
 
+    @Test
+    @DisplayName("Subir imágenes de paciente de forma correcta")
+    void subirImagenesDePacienteDeFormaCorrecta(){
+        subirImagen("ImagenPaciente");
+    }
    }
