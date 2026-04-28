@@ -3,8 +3,6 @@
 [![Estado de CI/CD](https://github.com/sergioldna/P6-github-actions/actions/workflows/ci.yml/badge.svg)](https://github.com/sergioldna/P6-github-actions/actions/workflows/ci.yml)
 ![Cobertura Jacoco](.github/badges/jacoco.svg)
 
-> ⚠️ Replace `<YOUR_USER>` and `<YOUR_REPO>` with your actual GitHub account details.
-
 A Spring Boot REST API that models a small medical records system. Built as a practice project for the **Software Maintenance and Testing** course at the University of Málaga.
 
 ---
