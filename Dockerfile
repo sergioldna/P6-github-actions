@@ -21,7 +21,7 @@ USER spring:spring
 WORKDIR /app
 
 # Copy the built JAR file from the builder stage. Assuming the JAR is named app.jar, adjust if your build produces a different name.
-COPY --from=builder /app/target/app.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 # Expose the port that the Spring Boot application will run on. By default, Spring Boot runs on port 8080, but adjust if your application uses a different port.
 EXPOSE 8080
