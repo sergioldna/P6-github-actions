@@ -17,7 +17,7 @@ spec:
         - name: mi-registro-secreto
       containers:
         - name: backend-app  # This should match the var DEPLOYMENT_NAME
-          image: sergioldna/ips-practica-hospital:latest # TODO: modify with your repo
+          image: sergioldna/ips-practica-hospital:latest # Docker Hub requires lowercase
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
