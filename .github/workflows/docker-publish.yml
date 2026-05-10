@@ -85,9 +85,12 @@ jobs:
 
       - name: Update deployment image
         run: |
-          # Update the deployment with the new image using abbreviated SHA
+          # Construimos el nombre de la imagen directamente en minúsculas para evitar errores
+          IMAGE_LOWER=$(echo "${{ secrets.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}" | tr '[:upper:]' '[:lower:]')
+          SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
+          
           kubectl set image deployment/${{ vars.DEPLOYMENT_NAME }} \
-            ${{ vars.DEPLOYMENT_NAME }}=${{ vars.REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${GITHUB_SHA::7} \
+            ${{ vars.DEPLOYMENT_NAME }}=docker.io/${IMAGE_LOWER}:sha-${SHORT_SHA} \
             --namespace=${{ vars.NAMESPACE }}
 
       - name: Wait for deployment rollout
